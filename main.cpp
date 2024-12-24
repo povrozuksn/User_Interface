@@ -7,22 +7,25 @@ struct Button
     int w;
     int h;
     const char* text;
+    bool visible;
 
     void draw()
     {
-        txSetColor (TX_WHITE, 3);
-        txSetFillColor (TX_YELLOW);
-        Win32::RoundRect (txDC(), x, y, x+w, y+h, 30, 30);
-        txSelectFont("Times New Roman", 30);
-        txSetColor (TX_RED);
-        txDrawText(x, y, x+w, y+h, text);
+        if(visible)
+        {
+            txSetColor (TX_WHITE, 3);
+            txSetFillColor (TX_RED);
+            Win32::RoundRect (txDC(), x, y, x+w, y+h, 30, 30);
+            txSelectFont("Times New Roman", 30);
+            txDrawText(x, y, x+w, y+h, text);
+        }
     }
 
     bool click()
     {
-        return(txMouseX()>x && txMouseX()<x+w &&
-                txMouseY()>y && txMouseY()<y+h &&
-                txMouseButtons() == 1);
+        return  (txMouseX()>x && txMouseX()<x+w &&
+                 txMouseY()>y && txMouseY()<y+h &&
+                 txMouseButtons() == 1 && visible);
     }
 };
 
@@ -33,53 +36,143 @@ txTextCursor (false);
 
 string PAGE = "menu";
 
-Button btn0 = {100, 100, 200, 40, "Старт"};
-Button btn1 = {100, 150, 200, 40, "Правила игры"};
-Button btn2 = {100, 200, 200, 40, "Выход"};
-Button btn3 = {50, 50, 200, 40, "Назад"};
+Button btn[5];
+btn[0] = {100, 100, 200, 40, "Старт", true};
+btn[1] = {100, 150, 200, 40, "Настройки", true};
+btn[2] = {100, 200, 200, 40, "Правила", true};
+btn[3] = {100, 250, 200, 40, "О программе", true};
+btn[4] = {100, 300, 200, 40, "Выход", true};
 
-
-    while(!btn2.click())
+    while(!btn[4].click())
     {
         txClear();
         txBegin();
-
-        if(PAGE == "menu")
+//Меню
+        if(PAGE=="menu")
         {
-            btn0.draw();
-            btn1.draw();
-            btn2.draw();
-
-            if(btn0.click())
+            for(int i=0; i<=4; i++)
             {
-                PAGE = "game";
+                btn[i].draw();
             }
+
+            if(btn[0].click())
+            {
+                while(btn[0].click()) txSleep(50);
+                PAGE="game";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = false;
+                }
+            }
+            if(btn[1].click())
+            {
+                while(btn[1].click()) txSleep(50);
+                PAGE="nastr";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = false;
+                }
+            }
+            if(btn[2].click())
+            {
+                while(btn[2].click()) txSleep(50);
+                PAGE="rules";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = false;
+                }
+            }
+            if(btn[3].click())
+            {
+                while(btn[3].click()) txSleep(50);
+                PAGE="about";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = false;
+                }
+            }
+
 
             txSetFillColor (TX_BLACK);
         }
 
-        if(PAGE == "game")
+//Настройки
+        if(PAGE=="nastr")
         {
-
-            btn3.draw();
-            if(btn3.click())
+            txSetColor(TX_BLACK);
+            txTextOut(0, 0, "Страница Настройки");
+            if(GetAsyncKeyState(VK_ESCAPE))
             {
-                PAGE = "menu";
+                PAGE="menu";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = true;
+                }
             }
 
-            txSetFillColor (TX_WHITE);
-            txSetColor (TX_BLACK);
-            txRectangle (100, 200, 400, 500);
 
+            txSetFillColor (TX_BLUE);
+        }
+
+//Правила
+        if(PAGE=="rules")
+        {
+            txSetColor(TX_BLACK);
+            txTextOut(0, 0, "Страница Правила");
+            if(GetAsyncKeyState(VK_ESCAPE))
+            {
+                PAGE="menu";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = true;
+                }
+            }
+
+
+            txSetFillColor (TX_YELLOW);
+        }
+
+//О программе
+        if(PAGE=="about")
+        {
+            txSetColor(TX_BLACK);
+            txTextOut(0, 0, "Страница О программе");
+            if(GetAsyncKeyState(VK_ESCAPE))
+            {
+                PAGE="menu";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = true;
+                }
+            }
+
+
+            txSetFillColor (TX_GREEN);
+        }
+
+//Игра
+        if(PAGE=="game")
+        {
+            txSetColor(TX_BLACK);
+            txTextOut(0, 0, "Страница Игры");
+            if(GetAsyncKeyState(VK_ESCAPE))
+            {
+                PAGE="menu";
+                for(int i=0; i<=4; i++)
+                {
+                    btn[i].visible = true;
+                }
+            }
+
+
+            txSetFillColor (TX_WHITE);
         }
 
         txEnd();
-        txSleep(50);
+        txSleep(10);
     }
 
 txDisableAutoPause();
 return 0;
 }
-
-
 
